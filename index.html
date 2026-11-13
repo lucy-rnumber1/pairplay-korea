@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pairplay · Korea travel, made easy</title>
+<meta name="description" content="Travel services that make Korea easier for visitors. Pre-launch early access.">
+<style>
+  :root{
+    --accent:#2f6fed; --accent-soft:#e8efff;
+    --bg:#f7f6f2; --card:#ffffff; --ink:#17191e; --muted:#5f6571; --line:#e6e3dc;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans","PingFang TC","Microsoft JhengHei","Hiragino Sans","Yu Gothic",sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{font-weight:800;letter-spacing:-.02em;font-size:18px;cursor:pointer}
+  .brand span{color:var(--accent)}
+  .langs{display:flex;gap:4px}
+  .langs button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:5px 10px;font-size:13px;cursor:pointer}
+  .langs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12px;padding:5px 10px;border-radius:999px;margin-top:8px}
+  .hero{padding:18px 0 8px}
+  .emoji{width:76px;height:76px;border-radius:22px;background:var(--accent-soft);display:grid;place-items:center;font-size:40px;margin-bottom:14px}
+  h1{font-size:30px;line-height:1.2;letter-spacing:-.02em;margin:10px 0 10px}
+  .tag{color:var(--muted);font-size:17px;margin:0 0 18px}
+  .price{display:flex;align-items:baseline;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+  .price small{color:var(--muted);font-size:13px}
+  .price b{font-size:20px}
+  .cta{display:block;width:100%;border:0;border-radius:14px;background:var(--accent);color:#fff;font-weight:800;font-size:17px;padding:16px;cursor:pointer;box-shadow:0 6px 18px -8px var(--accent)}
+  .cta:active{transform:translateY(1px)}
+  section{margin:28px 0}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
+  .list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .list li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 14px 44px;position:relative}
+  .list li::before{content:"✓";position:absolute;left:14px;top:13px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;display:grid;place-items:center;font-weight:800}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .steps li{counter-increment:s;display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .steps li::before{content:counter(s);flex:0 0 30px;height:30px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:800;display:grid;place-items:center}
+  footer{color:var(--muted);font-size:12px;padding:24px 0 110px;border-top:1px solid var(--line);margin-top:32px}
+  .sticky{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:5}
+  .sticky .cta{max-width:528px;margin:0 auto}
+
+  /* hub */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:8px;min-height:120px}
+  .card:hover{border-color:var(--ink)}
+  .card .e{font-size:28px}
+  .card b{font-size:14px;line-height:1.3}
+
+  /* sheet */
+  .shade{position:fixed;inset:0;background:rgba(15,17,22,.45);display:none;z-index:10}
+  .sheet{position:fixed;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;padding:22px 16px calc(22px + env(safe-area-inset-bottom));display:none;z-index:11}
+  .sheet .in{max-width:528px;margin:0 auto}
+  .sheet h3{font-size:22px;margin:0 0 6px;letter-spacing:-.01em}
+  .sheet p{color:var(--muted);margin:0 0 16px}
+  .x{position:absolute;right:14px;top:12px;border:0;background:var(--bg);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer}
+  label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
+  input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:#fff;color:var(--ink)}
+  .row{display:grid;grid-template-columns:140px 1fr;gap:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips input{display:none}
+  .chips label{margin:0;font-weight:500;border:1px solid var(--line);border-radius:999px;padding:8px 12px;cursor:pointer;font-size:14px}
+  .chips input:checked+label{background:var(--accent);border-color:var(--accent);color:#fff}
+  .err{color:#c2362f;font-size:13px;min-height:18px;margin-top:8px}
+  .fine{color:var(--muted);font-size:12px;margin-top:10px;text-align:center}
+  .ty{text-align:center;padding:20px 0}
+  .ty .big{font-size:52px}
+  .perks{list-style:none;margin:0 0 6px;padding:12px 14px;background:var(--accent-soft);border-radius:14px;display:grid;gap:6px}
+  .perks li{padding-left:26px;position:relative;font-weight:600;font-size:14px}
+  .perks li::before{content:"🎁";position:absolute;left:0}
+  .perks li:first-child::before{content:"🔔"}
+  .code{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:16px 0 6px;background:var(--bg)}
+  .code small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+  .code .row2{display:flex;align-items:center;justify-content:center;gap:10px}
+  .code b.mail{font-size:17px;color:var(--ink);word-break:break-all}
+  .code button{border:1px solid var(--accent);background:#fff;color:var(--accent);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+  .note{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .ghost{background:transparent;color:var(--accent);box-shadow:none;border:1px solid var(--accent);margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand" id="brand"></div>
+    <div class="langs" id="langs"></div>
+  </header>
+  <main id="app"></main>
+  <footer id="foot"></footer>
+</div>
+<div class="sticky" id="sticky" hidden><button class="cta" id="stickyCta"></button></div>
+<div class="shade" id="shade"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><button class="x" id="close" aria-label="Close">×</button><div class="in" id="sheetIn"></div></div>
+
+<script>
+/* =========================================================
+   1) SETTINGS — 여기만 바꾸면 됩니다
+   ========================================================= */
+const CONFIG = {
+  BRAND: "Pairplay",               // 브랜드명
+  META_PIXEL_ID: "2006858143330254", // Pairplay Inbound Test 데이터 세트
+  GA4_ID: "",                      // 예: "G-XXXXXXXXXX"     (비워두면 GA 미사용)
+  SHEET_ENDPOINT: "https://script.google.com/macros/s/AKfycby4M6OlZwPDfYI3QBpqaJrd6a1gxWXhoEIjWdNbCJbkvrHSSbAuLFrVDKWph2CUILGmEw/exec",  // Apps Script 웹앱 URL
+  LOG_VIEWS_TO_SHEET: true,        // 페이지뷰·버튼클릭도 시트에 기록할지
+  DISCOUNT: "20%",                 // 얼리버드 할인 문구에 쓰이는 값
+  PRICE_TEST: false,               // true: 가격 A/B 랜덤 테스트 / false: 모든 방문자에게 A 가격 고정
+  ACTIVE: ["shop","ship","booking","lost","box"]  // 노출할 서비스 (이 목록에 없는 서비스는 숨김)
+};
+
+/* =========================================================
+   2) UI 문구 (en / zh-TW / ja)
+   ========================================================= */
+const UI = {
+  en:{badge:"Pre-launch · Early access",what:"What you get",how:"How it works",price:"Expected price",cta:"Reserve my spot",
+      hubTitle:"What would make your Korea trip easier?",hubSub:"Tap a service you'd actually use. We're launching the most-wanted ones first.",
+      mTitle:"Almost there — we're launching soon",mBody:"This service isn't open yet. Sign up now and get early-access perks:",perks:["Be the first to know when we launch","{d} off your first booking — we'll email your code when we launch"],
+      name:"Name (optional)",email:"Email",nat:"Nationality",msg:"Messenger (optional)",msgPh:"Messenger ID",when:"When are you visiting Korea?",
+      wtp:"Would you book at this price?",wtpO:["Yes, definitely","Maybe, if a bit cheaper","No"],submit:"Get early access",
+      privacy:"We'll only contact you about this service. No spam.",tyTitle:"You're on the list!",tyBody:"Thanks! We're still getting ready. When we launch, we'll email you early access and a {d} off code for your first booking.",tyNote:"We'll send it to {email}",
+      back:"See other services",reqEmail:"Please enter a valid email.",reqNat:"Please select your nationality.",notDecided:"Not decided yet",other:"Other",
+      foot:"Pre-launch test by Pairplay. Prices in USD are estimates and may change."},
+  zh:{badge:"即將推出・搶先登記",what:"服務內容",how:"使用方式",price:"預計價格",cta:"搶先預約",
+      hubTitle:"什麼能讓你的韓國旅行更輕鬆？",hubSub:"點選你真的會用的服務，最多人想要的會最先推出。",
+      mTitle:"就差一步——服務即將推出",mBody:"這項服務尚未開放。現在登記即可享有搶先優惠：",perks:["上線時第一時間通知你","首次預訂享 {d} 折扣——上線時以 Email 寄送折扣碼"],
+      name:"姓名（選填）",email:"Email",nat:"國籍",msg:"通訊軟體（選填）",msgPh:"通訊軟體 ID",when:"預計何時來韓國？",
+      wtp:"這個價格你會預訂嗎？",wtpO:["會，一定","可能，再便宜一點的話","不會"],submit:"加入搶先名單",
+      privacy:"我們只會就此服務聯絡你，不會發送垃圾訊息。",tyTitle:"已加入名單！",tyBody:"謝謝！服務正在準備中，上線時我們會以 Email 寄送搶先體驗資格與首次預訂 {d} 折扣碼。",tyNote:"寄送至：{email}",
+      back:"看看其他服務",reqEmail:"請填寫正確的 Email。",reqNat:"請選擇國籍。",notDecided:"尚未決定",other:"其他",
+      foot:"Pairplay 上線前測試。價格以美元計，為預估價，可能調整。"},
+  ja:{badge:"近日公開・先行登録受付中",what:"サービス内容",how:"ご利用の流れ",price:"予定価格",cta:"先行予約する",
+      hubTitle:"韓国旅行で、何があったら便利ですか？",hubSub:"実際に使いたいサービスをタップしてください。希望の多いものから公開します。",
+      mTitle:"もうすぐ公開します",mBody:"このサービスはまだ準備中です。今登録すると先行特典がもらえます：",perks:["公開時にいち早くお知らせ","初回予約が{d}オフ——公開時に割引コードをメールでお送りします"],
+      name:"お名前（任意）",email:"メールアドレス",nat:"国籍",msg:"メッセンジャー（任意）",msgPh:"メッセンジャーID",when:"韓国旅行の予定時期",
+      wtp:"この価格なら予約しますか？",wtpO:["はい、ぜひ","もう少し安ければ","いいえ"],submit:"先行登録する",
+      privacy:"このサービスに関するご連絡のみ行います。迷惑メールは送りません。",tyTitle:"登録が完了しました！",tyBody:"ありがとうございます！現在準備中です。公開時に先行案内と初回予約{d}オフの割引コードをメールでお送りします。",tyNote:"送信先：{email}",
+      back:"ほかのサービスを見る",reqEmail:"正しいメールアドレスを入力してください。",reqNat:"国籍を選択してください。",notDecided:"未定",other:"その他",
+      foot:"Pairplayによる公開前テストです。価格（米ドル）は予定で、変更の可能性があります。"}
+};
+
+/* =========================================================
+   3) 서비스 (URL ?s= 값) — price.a / price.b 로 가격 A/B 테스트
+   u: 가격 표기 형식, {p} 자리에 가격이 들어감
+   ========================================================= */
+const SERVICES = {
+  shop:{emoji:"🛍️",color:"#2f6fed",price:{a:"10%",b:"10%"},t:{
+    en:{title:"Shop Korea before you land",tag:"Order from Korean online stores before your trip. We buy, receive and hand everything to you at your hotel or the airport.",
+        b:["Buy from Korean-only sites (Musinsa, Olive Young, fan stores) — no Korean phone or card needed","We inspect every item and handle exchanges before you arrive","Pick up at your hotel, Airbnb or the airport — no international shipping fees"],
+        st:["Send us product links","We buy & store them in Seoul","Get everything when you arrive"],u:"{p} of item price (min. $7)",q:"What would you buy?",o:["Beauty","Fashion","K-pop goods","Other"]},
+    zh:{title:"抵達前，先買好韓國",tag:"出發前從韓國網購，我們代購、代收，抵達時直接交到你的飯店或機場。",
+        b:["可買只限韓國的網站（Musinsa、Olive Young、偶像官方商店），不需韓國手機或信用卡","所有商品先驗貨，有問題在你抵達前就幫你換貨","飯店、Airbnb 或機場取貨，免國際運費"],
+        st:["傳商品連結給我們","我們代購並在首爾保管","抵達即取貨"],u:"商品價格的 {p}（最低 $7）",q:"想買什麼？",o:["美妝","服飾","K-pop 周邊","其他"]},
+    ja:{title:"韓国に着く前に、ショッピング完了",tag:"旅行前に韓国の通販で注文。私たちが購入・受け取りし、到着時にホテルや空港でお渡しします。",
+        b:["韓国限定サイト（Musinsa、Olive Young、公式グッズストア）も購入OK。韓国の電話番号・カード不要","全商品を検品し、到着前に交換まで対応","ホテル・Airbnb・空港で受け取り。国際送料なし"],
+        st:["商品リンクを送る","ソウルで購入・保管","到着したら受け取り"],u:"商品代金の{p}（最低$7）",q:"何を買いたいですか？",o:["コスメ","ファッション","K-POPグッズ","その他"]}}},
+
+  ship:{emoji:"📦",color:"#d9480f",price:{a:"$25",b:"$25"},t:{
+    en:{title:"Shopped too much? We ship it home.",tag:"Suitcase won't close? We pick up your extra shopping at your hotel, pack it and ship it to your door.",
+        b:["Hotel pickup — no post office lines","Packing, customs forms and tracking handled in English","Often cheaper than airline excess baggage fees"],
+        st:["Book a pickup time","We collect, pack & weigh","Track it all the way home"],u:"from {p} + shipping",q:"Where would it ship to?",o:["Taiwan","Hong Kong","Japan","Southeast Asia","USA / Other"]},
+    zh:{title:"買太多？幫你寄回家",tag:"行李箱關不上？我們到飯店收件、打包，直接寄到你家。",
+        b:["飯店取件，不用去郵局排隊","打包、報關單、物流追蹤全中文處理","通常比航空公司超重費便宜"],
+        st:["預約取件時間","收件、打包、秤重","追蹤包裹直到送達"],u:"{p} 起＋運費",q:"要寄到哪裡？",o:["台灣","香港","日本","東南亞","美國／其他"]},
+    ja:{title:"買いすぎても大丈夫。自宅まで発送します",tag:"スーツケースが閉まらない？ホテルで荷物を回収・梱包し、ご自宅へ発送します。",
+        b:["ホテル集荷で郵便局に並ぶ必要なし","梱包・税関書類・追跡まで日本語で対応","航空会社の超過手荷物料金より安いことが多い"],
+        st:["集荷時間を予約","回収・梱包・計量","自宅まで追跡"],u:"{p}〜＋送料",q:"発送先は？",o:["台湾","香港","日本","東南アジア","アメリカ・その他"]}}},
+
+  care:{emoji:"🩺",color:"#0b8a6f",price:{a:"$39",b:"$39"},t:{
+    en:{title:"Feeling sick in Korea? We'll handle it.",tag:"From pharmacy visits to clinic appointments, we book, guide and interpret for you in your language.",
+        b:["Find an open pharmacy or clinic near you, fast","Appointment booking + live interpretation by phone or in person","Receipts and documents prepared for your travel insurance claim"],
+        st:["Message us what you need & where you are","We book and guide you there","An interpreter joins your visit"],u:"{p} per visit",q:"Which would you use?",o:["Pharmacy help","Clinic / hospital visit","Dental","Just in case"]},
+    zh:{title:"在韓國身體不舒服？交給我們",tag:"從藥局到診所預約，我們用你的語言幫你預約、帶路、翻譯。",
+        b:["快速找到附近營業中的藥局或診所","預約掛號＋電話或陪同即時翻譯","備妥收據與文件，方便申請旅遊保險理賠"],
+        st:["傳送需求與所在位置","我們預約並帶你過去","翻譯陪你看診"],u:"每次 {p}",q:"你會使用哪項？",o:["藥局協助","診所／醫院就診","牙科","以備不時之需"]},
+    ja:{title:"韓国で体調を崩したら、お任せください",tag:"薬局から病院の予約まで、母国語で予約・案内・通訳します。",
+        b:["近くで開いている薬局・病院をすぐに検索","予約代行＋電話または同行通訳","海外旅行保険の請求に必要な書類も準備"],
+        st:["必要なことと現在地を送信","予約して道案内","通訳が受診に同行"],u:"1回 {p}",q:"どれを使いたいですか？",o:["薬局サポート","病院・クリニック受診","歯科","念のため"]}}},
+
+  lost:{emoji:"🔎",color:"#7048e8",price:{a:"$19",b:"$19"},t:{
+    en:{title:"Lost something in Korea? We'll find it.",tag:"Phone left in a taxi? Wallet on the subway? We file reports in Korean, track it down and get it back to you — even after you fly home.",
+        b:["Reports filed with police, subway and taxi lost & found in Korean","We call and follow up so you don't have to","Delivered to your hotel or shipped overseas"],
+        st:["Tell us what you lost & where","We search and follow up","Get it back"],u:"{p} search fee",q:"What would you be most worried about losing?",o:["Phone","Wallet / cards","Passport","Bag / other"]},
+    zh:{title:"在韓國掉東西？我們幫你找",tag:"手機掉在計程車上？錢包忘在地鐵？我們用韓文報案、追蹤，找到後送還給你，回國後也沒問題。",
+        b:["以韓文向警察、地鐵、計程車遺失物中心報案","由我們打電話持續追蹤","送到飯店或寄到海外"],
+        st:["告訴我們遺失物與地點","搜尋並追蹤","拿回失物"],u:"搜尋費 {p}",q:"你最擔心遺失什麼？",o:["手機","錢包／卡片","護照","包包／其他"]},
+    ja:{title:"韓国で落とし物？私たちが探します",tag:"タクシーにスマホを忘れた？地下鉄に財布を？韓国語で届け出・追跡し、帰国後でもお届けします。",
+        b:["警察・地下鉄・タクシーの遺失物センターへ韓国語で届け出","電話での確認・フォローも代行","ホテルへお届け、または海外へ発送"],
+        st:["なくした物と場所を伝える","捜索とフォロー","手元に戻る"],u:"捜索料 {p}",q:"なくして一番困るものは？",o:["スマホ","財布・カード","パスポート","バッグ・その他"]}}},
+
+  beauty:{emoji:"💅",color:"#d6336c",price:{a:"$10",b:"$10"},t:{
+    en:{title:"Book Seoul's best salons — no Korean needed",tag:"Hair, nails, head spa and skin care. We find the right shop, book it and pass on your style requests in Korean.",
+        b:["Access popular local salons that only take Korean bookings","Your requests translated so you get exactly the look you want","Prices confirmed before you go"],
+        st:["Tell us what you want","We match & book","Show up and enjoy"],u:"{p} booking fee",q:"What would you book?",o:["Hair","Nails","Head spa","Skin care"]},
+    zh:{title:"首爾人氣美容店，不會韓文也能預約",tag:"剪髮、美甲、頭皮 SPA、皮膚管理。我們幫你找店、預約，並用韓文轉達你的需求。",
+        b:["可預約只接受韓文預約的在地人氣店","需求翻譯清楚，做出你想要的樣子","出發前確認價格"],
+        st:["告訴我們你的需求","配對並預約","到店享受"],u:"預約手續費 {p}",q:"想預約什麼？",o:["美髮","美甲","頭皮 SPA","皮膚管理"]},
+    ja:{title:"ソウルの人気サロン、韓国語なしで予約",tag:"ヘア、ネイル、ヘッドスパ、スキンケア。お店選びから予約、韓国語での要望伝達まで代行します。",
+        b:["韓国語予約のみの人気ローカルサロンも予約可能","要望を正確に翻訳して理想の仕上がりに","料金は事前に確認"],
+        st:["希望を伝える","お店選びと予約","来店して楽しむ"],u:"予約手数料 {p}",q:"何を予約したいですか？",o:["ヘア","ネイル","ヘッドスパ","スキンケア"]}}},
+
+  booking:{emoji:"📅",color:"#1098ad",price:{a:"$10",b:"$10"},t:{
+    en:{title:"Book anything in Korea — no Korean phone needed",tag:"Popular restaurants, salons, classes and pop-ups that only take Korean bookings. Tell us what you want, and we'll book it for you.",
+        b:["Restaurants, beauty salons, experiences and pop-up stores that need a Korean phone number","We book, confirm and pass on your requests in Korean","Booking confirmed before you go — pay the venue as usual"],
+        st:["Tell us what, where & when","We book and confirm","Show up and enjoy"],u:"{p} per booking",q:"What would you book?",o:["Restaurants","Beauty (hair, nails, spa)","Experiences & classes","Pop-up stores"]},
+    zh:{title:"韓國大小預約，交給我們——不需韓國手機",tag:"人氣餐廳、美容店、體驗課程、快閃店，很多只接受韓文預約。告訴我們你想去哪裡，我們幫你訂好。",
+        b:["需要韓國手機號碼的餐廳、美容店、體驗活動與快閃店都能預約","由我們預約、確認，並用韓文轉達你的需求","出發前確認預約，費用照常在店家支付"],
+        st:["告訴我們想預約的內容、地點與時間","我們預約並確認","準時到店享受"],u:"每筆預約 {p}",q:"想預約什麼？",o:["餐廳","美容（美髮、美甲、SPA）","體驗與課程","快閃店"]},
+    ja:{title:"韓国の予約、まとめて代行——韓国の電話番号は不要",tag:"人気レストラン、サロン、体験クラス、ポップアップストアなど、韓国語予約のみのお店もおまかせください。",
+        b:["韓国の電話番号が必要なレストラン・美容サロン・体験・ポップアップストアも予約可能","予約・確認から韓国語での要望伝達まで代行","事前に予約確定、お支払いは通常どおりお店で"],
+        st:["行きたいお店・日時を伝える","予約して確定","当日行くだけ"],u:"1件 {p}",q:"何を予約したいですか？",o:["レストラン","美容（ヘア・ネイル・スパ）","体験・クラス","ポップアップストア"]}}},
+
+  box:{emoji:"🎁",color:"#e67700",price:{a:"$45",b:"$45"},t:{
+    en:{title:"SEOUL MATE: your Korea starter box, waiting at your hotel",tag:"A box of Korean favorites — snacks, beauty, personalized keepsakes and more — waiting at your hotel.",
+        b:["Korean snacks & K-beauty picks","Personalized items made with your name","Trendy Korean-style goodies & souvenirs","Optional transit card, topped up and ready to use"],
+        st:["Order before your trip","We personalize & pack your box","Find it waiting at your hotel"],u:"{p} per box (+ optional transit card)",q:"Add a transit card?",o:["No thanks (I'll use mobile pay)","Yes, ₩10,000 top-up","Yes, ₩20,000 top-up","Yes, ₩30,000 top-up"]},
+    zh:{title:"SEOUL MATE：韓國旅行好物盒，在飯店等你",tag:"裝滿韓國人氣好物的禮盒：零食、美妝、專屬訂製小物等，在飯店等你。",
+        b:["韓國零食與美妝小物","以你的名字訂製的專屬小物","韓風潮流好物與紀念品","可加購交通卡，儲值好即可使用"],
+        st:["出發前下單","我們訂製並打包","在飯店領取你的禮盒"],u:"每盒 {p}（交通卡另購）",q:"要加購交通卡嗎？",o:["不用（我用行動支付）","要，儲值 ₩10,000","要，儲值 ₩20,000","要，儲值 ₩30,000"]},
+    ja:{title:"SEOUL MATE：韓国旅のお楽しみボックスをホテルへ",tag:"お菓子、コスメ、名前入りアイテムなど、韓国の人気アイテムを詰め込んだボックスがホテルで待っています。",
+        b:["韓国のお菓子とコスメ","名前入りのオリジナルアイテム","トレンドの韓国風グッズ＆おみやげ","オプションでチャージ済み交通カード"],
+        st:["旅行前に注文","名入れして梱包","ホテルで受け取り"],u:"1箱 {p}（交通カードは別途）",q:"交通カードを追加しますか？",o:["不要（モバイル決済を使う）","追加・₩10,000チャージ","追加・₩20,000チャージ","追加・₩30,000チャージ"]}}},
+  sports:{emoji:"⚾",color:"#1c7ed6",price:{a:"$69",b:"$69"},t:{
+    en:{title:"Korean baseball & football — guaranteed seats",tag:"Experience Korea's loudest crowds. Confirmed tickets, a cheer guide, and chicken & beer included.",
+        b:["Guaranteed tickets — no Korean ID or phone needed","A host who teaches you the cheers and chants","Chimaek (chicken & beer) and a cheering stick included"],
+        st:["Choose a game","Get confirmed e-tickets","Meet your host at the stadium"],u:"{p} per person",q:"Which sport?",o:["Baseball (KBO)","Football (K League)","Basketball","Volleyball"]},
+    zh:{title:"韓國職棒・足球 保證有位",tag:"體驗韓國最熱血的應援！確定座位、應援教學，附炸雞啤酒。",
+        b:["保證取得門票，不需韓國身分或手機","應援導師現場教你口號與歌","含炸雞啤酒與應援棒"],
+        st:["選擇比賽","收到確認電子票","在球場與導師會合"],u:"每人 {p}",q:"想看哪種比賽？",o:["棒球（KBO）","足球（K聯賽）","籃球","排球"]},
+    ja:{title:"韓国プロ野球・サッカー 座席確約",tag:"韓国一熱い応援を体験。確定チケット、応援ガイド、チキン＆ビール付き。",
+        b:["チケット確約。韓国のIDや電話番号は不要","応援歌やコールを教えるホスト付き","チメク（チキン＆ビール）と応援グッズ付き"],
+        st:["試合を選ぶ","確定電子チケットを受け取る","スタジアムでホストと合流"],u:"1名 {p}",q:"どの競技？",o:["野球（KBO）","サッカー（Kリーグ）","バスケ","バレー"]}}},
+
+  snap:{emoji:"📸",color:"#c2255c",price:{a:"$99",b:"$99"},t:{
+    en:{title:"Your Seoul photoshoot, like a K-drama",tag:"A local photographer, the best spots, and edited photos delivered in 48 hours.",
+        b:["Hanok, palace, Han River or café-street locations","Posing guide — no modeling experience needed","Edited photos within 48 hours"],
+        st:["Pick a location & date","Meet your photographer","Get your edited photos"],u:"{p} / 1 hour",q:"Who's in the photos?",o:["Just me","Couple","Friends","Family"]},
+    zh:{title:"首爾韓劇感寫真",tag:"在地攝影師、最佳拍攝地點，48 小時內交付修圖照片。",
+        b:["韓屋、古宮、漢江或咖啡街","姿勢指導，不需要經驗","48 小時內交付修圖"],
+        st:["選地點與日期","與攝影師會合","收到修圖照片"],u:"{p}／1 小時",q:"誰要拍？",o:["個人","情侶","朋友","家庭"]},
+    ja:{title:"ソウルで韓国ドラマみたいなスナップ撮影",tag:"現地フォトグラファーとベストスポットで撮影。補正写真を48時間以内にお届け。",
+        b:["韓屋・古宮・漢江・カフェ通りで撮影","ポーズ指導付き、経験不要","48時間以内に補正済み写真を納品"],
+        st:["場所と日付を選ぶ","フォトグラファーと合流","写真を受け取る"],u:"{p}／1時間",q:"誰と撮りますか？",o:["ひとり","カップル","友達","家族"]}}},
+
+  hiking:{emoji:"⛰️",color:"#2b8a3e",price:{a:"$79",b:"$79"},t:{
+    en:{title:"K-Hiking: Seoul's mountains, the easy way",tag:"Guided hikes up Bukhansan and more, with round-trip transport, a local guide and a post-hike Korean feast.",
+        b:["Round-trip transfer from central Seoul","English-speaking local hiking guide","Post-hike makgeolli & pajeon meal"],
+        st:["Choose a trail & date","Hop on at a central pickup","Hike, eat, ride back"],u:"{p} per person",q:"What kind of hike?",o:["Easy (2–3h)","Moderate (4–5h)","Sunrise / night view","Autumn foliage"]},
+    zh:{title:"K-登山：輕鬆征服首爾的山",tag:"北漢山等導覽登山，含來回交通、在地嚮導與登山後韓式大餐。",
+        b:["首爾市中心來回接送","在地登山嚮導","登山後馬格利酒＋煎餅"],
+        st:["選路線與日期","在市中心上車","登山、吃飯、回程"],u:"每人 {p}",q:"想要哪種行程？",o:["輕鬆（2–3 小時）","中等（4–5 小時）","日出／夜景","賞楓"]},
+    ja:{title:"Kハイキング：ソウルの山を気軽に",tag:"北漢山などのガイド付きハイキング。往復送迎、現地ガイド、下山後の韓国料理付き。",
+        b:["ソウル中心部から往復送迎","現地ハイキングガイド付き","下山後はマッコリとチヂミ"],
+        st:["コースと日付を選ぶ","中心部で乗車","登って、食べて、帰る"],u:"1名 {p}",q:"どんなコース？",o:["初級（2〜3時間）","中級（4〜5時間）","日の出・夜景","紅葉"]}}},
+
+  festival:{emoji:"🎆",color:"#f08c00",price:{a:"$139",b:"$139"},t:{
+    en:{title:"Korea's local festivals — ride & stay included",tag:"Fireworks, food and music festivals outside Seoul. Round-trip shuttle, entry and a night's stay in one booking.",
+        b:["Direct shuttle from Seoul — no bus-terminal hassle","Hand-picked stay near the festival","One price, one booking, English support"],
+        st:["Pick a festival","Board the shuttle in Seoul","Enjoy, stay, ride back"],u:"from {p} per person",q:"Which festivals interest you?",o:["Music","Food & drink","Fireworks / lanterns","Seasonal (flowers, snow)"]},
+    zh:{title:"韓國地方慶典：交通＋住宿一次搞定",tag:"首爾以外的煙火、美食、音樂節。來回接駁、入場與一晚住宿，一次預訂。",
+        b:["首爾直達接駁，不用去客運站","嚴選慶典附近住宿","一個價格、一次預訂、中文客服"],
+        st:["選擇慶典","在首爾搭接駁車","玩樂、住宿、回程"],u:"每人 {p} 起",q:"對哪種慶典有興趣？",o:["音樂","美食美酒","煙火／燈會","季節（花／雪）"]},
+    ja:{title:"韓国の地方フェスへ：送迎＋宿泊込み",tag:"ソウル郊外の花火・グルメ・音楽フェス。往復シャトル、入場、1泊を一括予約。",
+        b:["ソウルから直行シャトル。バスターミナル不要","フェス近くの厳選宿","一つの料金・一回の予約・日本語サポート"],
+        st:["フェスを選ぶ","ソウルでシャトルに乗車","楽しんで、泊まって、帰る"],u:"1名 {p}〜",q:"興味のあるフェスは？",o:["音楽","グルメ・お酒","花火・灯り","季節（花・雪）"]}}},
+
+  temple:{emoji:"🪷",color:"#8a5a2b",price:{a:"$129",b:"$129"},t:{
+    en:{title:"Temple Stay: a night with Korean monks",tag:"Meditation, temple food and a dawn bell ceremony at a mountain temple, with transport and English guidance.",
+        b:["Overnight at a traditional mountain temple","Meditation, tea ceremony and temple cuisine","Transfer from Seoul + English-speaking guide"],
+        st:["Choose a temple & date","Ride from Seoul","Stay overnight & return"],u:"{p} per person",q:"How long?",o:["Day program","1 night","2 nights","Not sure"]},
+    zh:{title:"寺院寄宿：與韓國僧侶共度一晚",tag:"在山中寺院體驗冥想、寺院料理與清晨鐘聲儀式，含交通與中文導覽。",
+        b:["入住傳統山中寺院","冥想、茶禮與寺院料理","首爾接送＋中文導覽"],
+        st:["選寺院與日期","從首爾出發","寄宿一晚後返回"],u:"每人 {p}",q:"想體驗多久？",o:["一日體驗","1 晚","2 晚","不確定"]},
+    ja:{title:"テンプルステイ：韓国の僧侶と過ごす一夜",tag:"山寺で瞑想、精進料理、早朝の鐘の儀式を体験。送迎と日本語ガイド付き。",
+        b:["伝統的な山寺に宿泊","瞑想・茶礼・精進料理","ソウルから送迎＋日本語ガイド"],
+        st:["寺と日付を選ぶ","ソウルから移動","1泊して帰る"],u:"1名 {p}",q:"期間は？",o:["日帰り","1泊","2泊","未定"]}}}
+};
+
+const COUNTRIES = ["TW","HK","JP","SG","MY","TH","PH","ID","VN","CN","US","CA","GB","AU","OTHER"];
+const MESSENGERS = ["WhatsApp","LINE","KakaoTalk","WeChat","Instagram"];
+
+/* =========================================================
+   4) STATE
+   ========================================================= */
+const qs = new URLSearchParams(location.search);
+const store = {
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+function pickLang(){
+  const q=(qs.get("lang")||"").toLowerCase();
+  if(UI[q]) return q;
+  const n=(navigator.language||"en").toLowerCase();
+  if(n.startsWith("zh")) return "zh";
+  if(n.startsWith("ja")) return "ja";
+  return "en";
+}
+let lang = pickLang();
+const isActive = k => SERVICES[k] && (!CONFIG.ACTIVE || CONFIG.ACTIVE.includes(k));
+let svc = isActive(qs.get("s")) ? qs.get("s") : null;
+let pv = (qs.get("p")||"").toLowerCase();
+if(!CONFIG.PRICE_TEST){ pv="a"; }
+else { if(pv!=="a" && pv!=="b"){ pv = store.get("kz_pv") || (Math.random()<.5?"a":"b"); } store.set("kz_pv", pv); }
+let sid = store.get("kz_sid"); if(!sid){ sid = Math.random().toString(36).slice(2)+Date.now().toString(36); store.set("kz_sid",sid); }
+const UTM = {}; ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid"].forEach(k=>UTM[k]=qs.get(k)||"");
+
+/* =========================================================
+   5) TRACKING (Meta Pixel · GA4 · Google Sheet)
+   ========================================================= */
+if(CONFIG.META_PIXEL_ID){
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', CONFIG.META_PIXEL_ID); fbq('track','PageView');
+}
+if(CONFIG.GA4_ID){
+  const g=document.createElement("script"); g.async=true; g.src="https://www.googletagmanager.com/gtag/js?id="+CONFIG.GA4_ID; document.head.appendChild(g);
+  window.dataLayer=window.dataLayer||[]; window.gtag=function(){dataLayer.push(arguments)}; gtag('js',new Date()); gtag('config',CONFIG.GA4_ID);
+}
+function toSheet(row){
+  if(!CONFIG.SHEET_ENDPOINT) return;
+  try{
+    fetch(CONFIG.SHEET_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(Object.assign({event:"",service:svc||"hub",lang:lang,price_variant:pv,session:sid,referrer:document.referrer,ua:navigator.userAgent},UTM,row))}).catch(()=>{});
+  }catch(e){}
+}
+function track(name, extra){
+  extra = extra||{};
+  const p = Object.assign({service:svc||"hub",lang:lang,price_variant:pv},extra);
+  if(window.fbq){
+    if(name==="view") fbq('track','ViewContent',{content_name:p.service,content_category:p.lang});
+    if(name==="cta")  fbq('track','InitiateCheckout',{content_name:p.service});
+    if(name==="lead") fbq('track','Lead',{content_name:p.service});
+    fbq('trackCustom','KZ_'+name,p);
+  }
+  if(window.gtag){
+    const map={view:"view_service",cta:"cta_click",lead:"generate_lead",hub_pick:"hub_pick"};
+    gtag('event',map[name]||name,p);
+  }
+  if(name==="lead" || CONFIG.LOG_VIEWS_TO_SHEET) toSheet(Object.assign({event:name},extra));
+}
+
+/* =========================================================
+   6) RENDER
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderChrome(){
+  document.documentElement.lang = lang==="zh"?"zh-Hant":lang;
+  $("brand").innerHTML = esc(CONFIG.BRAND).replace(/-(.*)$/,'-<span>$1</span>');
+  $("langs").innerHTML = [["en","EN"],["zh","繁中"],["ja","日本語"]].map(([k,l])=>`<button data-l="${k}" class="${k===lang?"on":""}">${l}</button>`).join("");
+  $("foot").textContent = UI[lang].foot;
+}
+function priceText(s){ return s.t[lang].u.replace("{p}", s.price[pv]); }
+
+function renderService(){
+  const s=SERVICES[svc], c=s.t[lang], u=UI[lang];
+  document.documentElement.style.setProperty("--accent", s.color);
+  document.documentElement.style.setProperty("--accent-soft", s.color+"1f");
+  document.title = c.title+" · "+CONFIG.BRAND;
+  $("app").innerHTML = `
+    <div class="hero">
+      <div class="emoji">${s.emoji}</div>
+      <span class="badge">${esc(u.badge)}</span>
+      <h1>${esc(c.title)}</h1>
+      <p class="tag">${esc(c.tag)}</p>
+      <div class="price"><small>${esc(u.price)}</small><b>${esc(priceText(s))}</b></div>
+      <button class="cta" data-cta="hero">${esc(u.cta)}</button>
+    </div>
+    <section><h2>${esc(u.what)}</h2><ul class="list">${c.b.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+    <section><h2>${esc(u.how)}</h2><ol class="steps">${c.st.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
+    <section style="text-align:center"><button class="cta ghost" id="toHub">${esc(u.back)}</button></section>`;
+  $("sticky").hidden=false; $("stickyCta").textContent=u.cta;
+  window.scrollTo(0,0);
+}
+
+function renderHub(){
+  const u=UI[lang];
+  document.documentElement.style.setProperty("--accent","#2f6fed");
+  document.documentElement.style.setProperty("--accent-soft","#e8efff");
+  document.title = CONFIG.BRAND+" · Korea travel, made easy";
+  $("app").innerHTML = `
+    <div class="hero">
+      <span class="badge">${esc(u.badge)}</span>
+      <h1>${esc(u.hubTitle)}</h1>
+      <p class="tag">${esc(u.hubSub)}</p>
+    </div>
+    <div class="grid">${Object.keys(SERVICES).filter(isActive).sort((a,b)=>(CONFIG.ACTIVE||[]).indexOf(a)-(CONFIG.ACTIVE||[]).indexOf(b)).map(k=>{const s=SERVICES[k];return `<button class="card" data-s="${k}"><span class="e">${s.emoji}</span><b>${esc(s.t[lang].title)}</b></button>`}).join("")}</div>`;
+  $("sticky").hidden=true;
+  window.scrollTo(0,0);
+}
+
+function render(){ renderChrome(); svc?renderService():renderHub(); }
+
+function setURL(){
+  const q=new URLSearchParams(location.search);
+  if(svc) q.set("s",svc); else q.delete("s");
+  q.set("lang",lang);
+  history.replaceState(null,"",location.pathname+"?"+q.toString());
+}
+
+/* ---------- sheet (fake door form) ---------- */
+function monthOptions(){
+  const out=[], d=new Date(); d.setDate(1);
+  const loc = lang==="zh"?"zh-TW":lang;
+  for(let i=0;i<12;i++){
+    const m=new Date(d.getFullYear(), d.getMonth()+i, 1);
+    const v=m.getFullYear()+"-"+String(m.getMonth()+1).padStart(2,"0");
+    let label=v; try{ label=new Intl.DateTimeFormat(loc,{year:"numeric",month:"long"}).format(m);}catch(e){}
+    out.push(`<option value="${v}">${esc(label)}</option>`);
+  }
+  out.push(`<option value="undecided">${esc(UI[lang].notDecided)}</option>`);
+  return out.join("");
+}
+function countryOptions(){
+  let dn=null; try{ dn=new Intl.DisplayNames([lang==="zh"?"zh-Hant":lang],{type:"region"}); }catch(e){}
+  return `<option value=""></option>`+COUNTRIES.map(c=>{
+    const label = c==="OTHER" ? UI[lang].other : (dn? dn.of(c) : c);
+    return `<option value="${c}">${esc(label)}</option>`;}).join("");
+}
+function chips(name, opts){
+  return `<div class="chips">${opts.map((o,i)=>`<input type="radio" name="${name}" id="${name}${i}" value="${esc(o)}"><label for="${name}${i}">${esc(o)}</label>`).join("")}</div>`;
+}
+function openSheet(where){
+  track("cta",{where:where});
+  const s=SERVICES[svc], c=s.t[lang], u=UI[lang];
+  $("sheetIn").innerHTML = `
+    <h3>${esc(u.mTitle)}</h3>
+    <p style="margin-bottom:8px">${esc(u.mBody)}</p>
+    <ul class="perks">${u.perks.map(x=>`<li>${esc(x.replace("{d}",CONFIG.DISCOUNT))}</li>`).join("")}</ul>
+    <form id="f" novalidate>
+      <label>${esc(c.q)}</label>${chips("ans",c.o)}
+      <label>${esc(u.wtp)} <span style="font-weight:500;color:var(--muted)">(${esc(priceText(s))})</span></label>${chips("wtp",u.wtpO)}
+      <label for="em">${esc(u.email)} *</label><input id="em" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+      <label for="co">${esc(u.nat)} *</label><select id="co">${countryOptions()}</select>
+      <label for="nm">${esc(u.name)}</label><input id="nm" autocomplete="name">
+      <label>${esc(u.msg)}</label>
+      <div class="row"><select id="ct">${MESSENGERS.map(x=>`<option>${x}</option>`).join("")}</select><input id="cv" placeholder="${esc(u.msgPh)}"></div>
+      <label for="mo">${esc(u.when)}</label><select id="mo">${monthOptions()}</select>
+      <div class="err" id="err"></div>
+      <button class="cta" type="submit">${esc(u.submit)}</button>
+      <div class="fine">${esc(u.privacy)}</div>
+    </form>`;
+  $("shade").style.display="block"; $("sheet").style.display="block";
+  $("f").addEventListener("submit", submitForm);
+}
+function closeSheet(){ $("shade").style.display="none"; $("sheet").style.display="none"; }
+function submitForm(e){
+  e.preventDefault();
+  const u=UI[lang];
+  const email=$("em").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("err").textContent=u.reqEmail; $("em").focus(); return; }
+  if(!$("co").value){ $("err").textContent=u.reqNat; $("co").focus(); return; }
+  const msgId=$("cv").value.trim();
+  const val = n => { const x=document.querySelector(`input[name="${n}"]:checked`); return x?x.value:""; };
+  track("lead",{email:email,nationality:$("co").value,name:$("nm").value.trim(),messenger_type:msgId?$("ct").value:"",messenger_id:msgId,visit_month:$("mo").value,service_answer:val("ans"),wtp:val("wtp")});
+  $("sheetIn").innerHTML = `<div class="ty"><div class="big">🎉</div><h3>${esc(u.tyTitle)}</h3>
+    <p style="margin:0">${esc(u.tyBody.replace("{d}",CONFIG.DISCOUNT))}</p>
+    <div class="code"><small>✉️ ${esc(u.tyNote.replace("{email}",""))}</small><b class="mail">${esc(email)}</b></div>
+    <button class="cta ghost" id="tyHub">${esc(u.back)}</button></div>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e=>{
+  const t=e.target.closest("[data-l],[data-s],[data-cta],#stickyCta,#toHub,#tyHub,#close,#shade,#brand");
+  if(!t) return;
+  if(t.dataset.l){ lang=t.dataset.l; setURL(); render(); return; }
+  if(t.dataset.s){ svc=t.dataset.s; track("hub_pick",{picked:svc}); setURL(); render(); track("view"); return; }
+  if(t.dataset.cta) return openSheet(t.dataset.cta);
+  if(t.id==="stickyCta") return openSheet("sticky");
+  if(t.id==="toHub"||t.id==="tyHub"||t.id==="brand"){ closeSheet(); svc=null; setURL(); render(); track("view"); return; }
+  if(t.id==="close"||t.id==="shade") return closeSheet();
+});
+
+render();
+track("view");
+</script>
+</body>
+</html>
