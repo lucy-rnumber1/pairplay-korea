@@ -125,6 +125,7 @@ const UI = {
       wtp:"Would you book at this price?",wtpO:["Yes, definitely","Maybe, if a bit cheaper","No"],submit:"Get early access",
       privacy:"We'll only contact you about this service. No spam.",tyTitle:"You're on the list!",tyBody:"Thanks! We're still getting ready. When we launch, we'll email you early access and a {d} off code for your first booking.",tyNote:"We'll send it to {email}",
       back:"See other services",reqEmail:"Please enter a valid email.",reqNat:"Please select your nationality.",notDecided:"Not decided yet",other:"Other",
+      d2Title:"You're on the list! 🎉",d2Body:"Help us get it right for you — a few optional questions (30 sec).",d2Submit:"Send",skip:"Skip",natOpt:"Nationality (optional)",
       foot:"Pre-launch test by Pairplay. Prices in USD are estimates and may change."},
   zh:{badge:"即將推出・搶先登記",what:"服務內容",how:"使用方式",price:"預計價格",cta:"搶先預約",
       hubTitle:"什麼能讓你的韓國旅行更輕鬆？",hubSub:"點選你真的會用的服務，最多人想要的會最先推出。",
@@ -133,6 +134,7 @@ const UI = {
       wtp:"這個價格你會預訂嗎？",wtpO:["會，一定","可能，再便宜一點的話","不會"],submit:"加入搶先名單",
       privacy:"我們只會就此服務聯絡你，不會發送垃圾訊息。",tyTitle:"已加入名單！",tyBody:"謝謝！服務正在準備中，上線時我們會以 Email 寄送搶先體驗資格與首次預訂 {d} 折扣碼。",tyNote:"寄送至：{email}",
       back:"看看其他服務",reqEmail:"請填寫正確的 Email。",reqNat:"請選擇國籍。",notDecided:"尚未決定",other:"其他",
+      d2Title:"已加入名單！🎉",d2Body:"想讓服務更適合你嗎？回答幾個選填問題（約 30 秒）。",d2Submit:"送出",skip:"略過",natOpt:"國籍（選填）",
       foot:"Pairplay 上線前測試。價格以美元計，為預估價，可能調整。"},
   ja:{badge:"近日公開・先行登録受付中",what:"サービス内容",how:"ご利用の流れ",price:"予定価格",cta:"先行予約する",
       hubTitle:"韓国旅行で、何があったら便利ですか？",hubSub:"実際に使いたいサービスをタップしてください。希望の多いものから公開します。",
@@ -141,6 +143,7 @@ const UI = {
       wtp:"この価格なら予約しますか？",wtpO:["はい、ぜひ","もう少し安ければ","いいえ"],submit:"先行登録する",
       privacy:"このサービスに関するご連絡のみ行います。迷惑メールは送りません。",tyTitle:"登録が完了しました！",tyBody:"ありがとうございます！現在準備中です。公開時に先行案内と初回予約{d}オフの割引コードをメールでお送りします。",tyNote:"送信先：{email}",
       back:"ほかのサービスを見る",reqEmail:"正しいメールアドレスを入力してください。",reqNat:"国籍を選択してください。",notDecided:"未定",other:"その他",
+      d2Title:"登録が完了しました！🎉",d2Body:"よりよいサービスのために、任意の質問にお答えください（約30秒）。",d2Submit:"送信",skip:"スキップ",natOpt:"国籍（任意）",
       foot:"Pairplayによる公開前テストです。価格（米ドル）は予定で、変更の可能性があります。"}
 };
 
@@ -405,7 +408,7 @@ function setURL(){
 
 /* ---------- sheet (fake door form) ---------- */
 function monthOptions(){
-  const out=[], d=new Date(); d.setDate(1);
+  const out=[`<option value=""></option>`], d=new Date(); d.setDate(1);
   const loc = lang==="zh"?"zh-TW":lang;
   for(let i=0;i<12;i++){
     const m=new Date(d.getFullYear(), d.getMonth()+i, 1);
@@ -433,34 +436,56 @@ function openSheet(where){
     <p style="margin-bottom:8px">${esc(u.mBody)}</p>
     <ul class="perks">${u.perks.map(x=>`<li>${esc(x.replace("{d}",CONFIG.DISCOUNT))}</li>`).join("")}</ul>
     <form id="f" novalidate>
-      <label>${esc(c.q)}</label>${chips("ans",c.o)}
-      <label>${esc(u.wtp)} <span style="font-weight:500;color:var(--muted)">(${esc(priceText(s))})</span></label>${chips("wtp",u.wtpO)}
       <label for="em">${esc(u.email)} *</label><input id="em" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-      <label for="co">${esc(u.nat)} *</label><select id="co">${countryOptions()}</select>
-      <label for="nm">${esc(u.name)}</label><input id="nm" autocomplete="name">
-      <label>${esc(u.msg)}</label>
-      <div class="row"><select id="ct">${MESSENGERS.map(x=>`<option>${x}</option>`).join("")}</select><input id="cv" placeholder="${esc(u.msgPh)}"></div>
-      <label for="mo">${esc(u.when)}</label><select id="mo">${monthOptions()}</select>
       <div class="err" id="err"></div>
       <button class="cta" type="submit">${esc(u.submit)}</button>
       <div class="fine">${esc(u.privacy)}</div>
     </form>`;
   $("shade").style.display="block"; $("sheet").style.display="block";
-  $("f").addEventListener("submit", submitForm);
+  $("f").addEventListener("submit", submitEmail);
+  setTimeout(()=>{ try{$("em").focus();}catch(e){} },50);
 }
 function closeSheet(){ $("shade").style.display="none"; $("sheet").style.display="none"; }
-function submitForm(e){
+let leadEmail="";
+/* 1단계: 이메일만 받으면 바로 lead 기록 */
+function submitEmail(e){
   e.preventDefault();
   const u=UI[lang];
   const email=$("em").value.trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("err").textContent=u.reqEmail; $("em").focus(); return; }
-  if(!$("co").value){ $("err").textContent=u.reqNat; $("co").focus(); return; }
+  leadEmail=email;
+  track("lead",{email:email});
+  const s=SERVICES[svc], c=s.t[lang];
+  /* 2단계: 선택 질문 (답하면 lead_detail 로 기록) */
+  $("sheetIn").innerHTML = `
+    <h3>${esc(u.d2Title)}</h3>
+    <p style="margin-bottom:8px">${esc(u.d2Body)}</p>
+    <form id="f2" novalidate>
+      <label>${esc(c.q)}</label>${chips("ans",c.o)}
+      <label>${esc(u.wtp)} <span style="font-weight:500;color:var(--muted)">(${esc(priceText(s))})</span></label>${chips("wtp",u.wtpO)}
+      <label for="co">${esc(u.natOpt)}</label><select id="co">${countryOptions()}</select>
+      <label for="mo">${esc(u.when)}</label><select id="mo">${monthOptions()}</select>
+      <label for="nm">${esc(u.name)}</label><input id="nm" autocomplete="name">
+      <label>${esc(u.msg)}</label>
+      <div class="row"><select id="ct">${MESSENGERS.map(x=>`<option>${x}</option>`).join("")}</select><input id="cv" placeholder="${esc(u.msgPh)}"></div>
+      <button class="cta" type="submit">${esc(u.d2Submit)}</button>
+      <button class="cta ghost" type="button" id="skip2" style="margin-top:8px">${esc(u.skip)}</button>
+    </form>`;
+  $("f2").addEventListener("submit", submitDetails);
+  $("skip2").addEventListener("click", showThanks);
+}
+function submitDetails(e){
+  e.preventDefault();
   const msgId=$("cv").value.trim();
   const val = n => { const x=document.querySelector(`input[name="${n}"]:checked`); return x?x.value:""; };
-  track("lead",{email:email,nationality:$("co").value,name:$("nm").value.trim(),messenger_type:msgId?$("ct").value:"",messenger_id:msgId,visit_month:$("mo").value,service_answer:val("ans"),wtp:val("wtp")});
+  track("lead_detail",{email:leadEmail,nationality:$("co").value,name:$("nm").value.trim(),messenger_type:msgId?$("ct").value:"",messenger_id:msgId,visit_month:$("mo").value,service_answer:val("ans"),wtp:val("wtp")});
+  showThanks();
+}
+function showThanks(){
+  const u=UI[lang];
   $("sheetIn").innerHTML = `<div class="ty"><div class="big">🎉</div><h3>${esc(u.tyTitle)}</h3>
     <p style="margin:0">${esc(u.tyBody.replace("{d}",CONFIG.DISCOUNT))}</p>
-    <div class="code"><small>✉️ ${esc(u.tyNote.replace("{email}",""))}</small><b class="mail">${esc(email)}</b></div>
+    <div class="code"><small>✉️ ${esc(u.tyNote.replace("{email}",""))}</small><b class="mail">${esc(leadEmail)}</b></div>
     <button class="cta ghost" id="tyHub">${esc(u.back)}</button></div>`;
 }
 
